@@ -1,11 +1,16 @@
 ﻿using ModulusChecking.Loaders;
 using ModulusChecking.Models;
-using ModulusChecking.Steps;
 using ModulusChecking.Steps.ConfirmDetailsAreValid;
 
 namespace ModulusChecking
 {
-    public class ModulusChecker
+    public interface IModulusChecker
+    {
+        bool? CheckBankAccount(string sortCode, string accountNumber);
+        ModulusCheckOutcome CheckBankAccountWithExplanation(string sortCode, string accountNumber);
+    }
+
+    public class ModulusChecker : IModulusChecker
     {
         private readonly IModulusWeightTable _weightTable;
 

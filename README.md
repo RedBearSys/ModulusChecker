@@ -16,9 +16,12 @@ Modulus Checker is [available on Nuget](https://nuget.org/packages/RedBear.Modul
 
 Targets .NET Standard 2.0.
 
-#### Usage
+#### Differences to the Paul D'Ambra version
+The `ModulusChecker` class  does **not** return a value of `true` in `ModulusCheckOutcome.Result` if the sort code isn't recognised. It will instead return `null` since `ModulusCheckOutcome.Result` has been changed to a `bool?` type. The logic here is that we don't know if the bank details are valid or not - we just know that we can't validate them.
 
-**NB:** unlike the original library by Paul D'Ambra, *this* fork of the library does **not** return a value of `true` in `ModulusCheckOutcome.Result` if the sort code isn't recognised. It will instead return `null` since `ModulusCheckOutcome.Result` has been changed to a `bool?` type.
+Additionally, `ModulusChecker` now implements an `IModulusChecker` interface to assist with dependency injection and unit testing.
+
+#### Usage
 
 ```csharp
 var sortCode = "012345";
