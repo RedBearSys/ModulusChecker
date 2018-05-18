@@ -20,7 +20,9 @@ namespace ModulusCheckingTests.Loaders
         {
             var modulusWeight = ModulusWeightTable.GetInstance;
             Assert.NotNull(modulusWeight.RuleMappings);
-            Assert.AreEqual(1053, modulusWeight.RuleMappings.Count());
+
+            // Number of populated lines in ModulusChecking\Resources\valacdos.txt
+            Assert.AreEqual(1056, modulusWeight.RuleMappings.Count());
             Assert.IsInstanceOf<ModulusWeightMapping>(modulusWeight.RuleMappings.ElementAt(0));
         }
 
