@@ -12,13 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\scsubtab.txt" />
-    <None Remove="Resources\valacdos.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\scsubtab.txt" />
-    <EmbeddedResource Include="Resources\valacdos.txt" />
+    <None Update="Resources\scsubtab.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\valacdos.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
