@@ -1,0 +1,6 @@
+<Project>
+	<PropertyGroup>
+	    <PackageIconUrl>https://rbpublic.blob.core.windows.net/assets/redbear_logo.png</PackageIconUrl>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
+</Project>

@@ -10,7 +10,7 @@ Receiving a valid modulus check result only means that the Sort Code and Account
 The algorithms, test cases and reference data can be found  [on the vocalink website](https://www.vocalink.com/customer-support/modulus-checking/) . That site should be considered the authoritative source for the modulus checking algorithm and weighting data.
 
 #### Nuget
-Modulus Checker is [available on Nuget](https://nuget.org/packages/ModulusChecker/). To install it run the following command in the Package Manager Console ```Install-Package RedBear.ModulusChecker``` and reference its namespace as ```using ModulusChecking;```
+Modulus Checker is [available on Nuget](https://nuget.org/packages/RedBear.ModulusChecker/). To install it run the following command in the Package Manager Console ```Install-Package RedBear.ModulusChecker``` and reference its namespace as ```using ModulusChecking;```
 
 #### Version Requirements
 
