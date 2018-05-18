@@ -59,7 +59,7 @@ const string accountNumber = "88837493";
 var modulusChecker = new ModulusChecker();
 var outcome = modulusChecker.CheckBankAccountWithExplanation(sortCode,accountNumber);
             
-Assert.AreEqual(true, outcome.Result);
+Assert.IsNull(outcome.Result);
 Assert.AreEqual("Cannot invalidate these account details as there are no weight mappings for this sort code", outcome.Explanation);
 ```
 
