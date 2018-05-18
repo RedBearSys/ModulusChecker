@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using ModulusChecking.Properties;
+using System.Reflection;
 
 namespace ModulusChecking.Loaders
 {
@@ -14,7 +15,17 @@ namespace ModulusChecking.Loaders
         {
             if (_sortCodeSubstitutionSource != null) return;
 
-            _sortCodeSubstitutionSource = Resources.scsubtab
+            var assembly = Assembly.GetExecutingAssembly();
+            string mappings;
+
+            using (var stream = assembly.GetManifestResourceStream("ModulusChecking.Resources.scsubtab.txt"))
+                // ReSharper disable once AssignNullToNotNullAttribute
+            using (var reader = new StreamReader(stream))
+            {
+                mappings = reader.ReadToEnd();
+            }
+
+            _sortCodeSubstitutionSource = mappings
                 .Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
                 .Select(row => row.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries))
                 .Where(items => items.Length == 2)

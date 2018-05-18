@@ -8,14 +8,6 @@ namespace ModulusCheckingTests.Loaders
     public class ModulusWeightTests
     {
         [Test]
-        public void CanReadWeightFileResource()
-        {
-            var weightFile = ModulusChecking.Properties.Resources.valacdos;
-            Assert.NotNull(weightFile);
-            Assert.IsInstanceOf(typeof(string),weightFile);
-        }
-
-        [Test]
         public void CanGetRuleMappings()
         {
             var modulusWeight = ModulusWeightTable.GetInstance;
