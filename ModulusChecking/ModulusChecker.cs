@@ -14,7 +14,7 @@ namespace ModulusChecking
             _weightTable = ModulusWeightTable.GetInstance;
         }
 
-        public bool CheckBankAccount(string sortCode, string accountNumber) 
+        public bool? CheckBankAccount(string sortCode, string accountNumber) 
             => CheckBankAccountWithExplanation(sortCode, accountNumber);
 
         public ModulusCheckOutcome CheckBankAccountWithExplanation(string sortCode, string accountNumber)

@@ -30,7 +30,7 @@ namespace ModulusCheckingTests.Rules
         }
 
         [Test]
-        public void UnknownSortCodeIsValid()
+        public void UnknownSortCodeIsNull()
         {
             const string sortCode = "123456";
             var accountDetails = new BankAccountDetails(sortCode, "12345678")
@@ -39,11 +39,7 @@ namespace ModulusCheckingTests.Rules
                 WeightMappings = new List<ModulusWeightMapping>()
             };
             var result = _hasWeightMappingsStep.Process(accountDetails);
-            Assert.IsTrue(result);
-            
-            Assert.IsTrue(accountDetails.FirstResult);
-            
-            _nextStep.Verify(fmc => fmc.Process(It.IsAny<BankAccountDetails>()), Times.Never());
+            Assert.IsNull(result.Result);
         }
         
         [Test]

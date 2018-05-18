@@ -21,7 +21,7 @@ namespace ModulusChecking.Steps
         public bool Process(BankAccountDetails bankAccountDetails)
         {
             bool flag = bankAccountDetails.IsUncheckableForeignAccount();
-            return ((!bankAccountDetails.IsValidForModulusCheck() | flag) || this._firstModulusCalculatorStep.Process(bankAccountDetails));
+            return ((!bankAccountDetails.IsValidForModulusCheck() | flag) || this._firstModulusCalculatorStep.Process(bankAccountDetails) == true);
         }
     }
 }

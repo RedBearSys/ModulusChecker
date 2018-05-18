@@ -10,13 +10,16 @@ Receiving a valid modulus check result only means that the Sort Code and Account
 The algorithms, test cases and reference data can be found  [on the vocalink website](https://www.vocalink.com/customer-support/modulus-checking/) . That site should be considered the authoritative source for the modulus checking algorithm and weighting data.
 
 #### Nuget
-Modulus Checker is [available on Nuget](https://nuget.org/packages/RedBear.ModulusChecker/). To install it run the following command in the Package Manager Console ```Install-Package RedBear.ModulusChecker``` and reference its namespace as ```using ModulusChecking;```
+Modulus Checker is [available on Nuget](https://nuget.org/packages/RedBear.ModulusChecking/). To install it run the following command in the Package Manager Console ```Install-Package RedBear.ModulusChecking``` and reference its namespace as ```using ModulusChecking;```
 
 #### Version Requirements
 
 Targets .NET Standard 2.0.
 
 #### Usage
+
+**NB:** unlike the original library by Paul D'Ambra, *this* fork of the library does **not** return a value of `true` in `ModulusCheckOutcome.Result` if the sort code isn't recognised. It will instead return `null` since `ModulusCheckOutcome.Result` has been changed to a `bool?` type.
+
 ```csharp
 var sortCode = "012345";
 var accountNumber = "12345678";
