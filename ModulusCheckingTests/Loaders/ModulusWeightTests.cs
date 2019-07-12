@@ -22,7 +22,7 @@ namespace ModulusCheckingTests.Loaders
             Assert.NotNull(modulusWeight.RuleMappings);
 
             // Number of populated lines in ModulusChecking\Resources\valacdos.txt
-            Assert.AreEqual(1056, modulusWeight.RuleMappings.Count());
+            Assert.AreEqual(1093, modulusWeight.RuleMappings.Count());
             Assert.IsInstanceOf<ModulusWeightMapping>(modulusWeight.RuleMappings.ElementAt(0));
         }
 
