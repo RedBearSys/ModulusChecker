@@ -7,7 +7,7 @@ Modulus Checking is a process used to determine if a given account number could 
 ***
 Receiving a valid modulus check result only means that the Sort Code and Account Number pair **could** exist not that they do!
 ***
-The algorithms, test cases and reference data can be found  [on the vocalink website](https://www.vocalink.com/customer-support/modulus-checking/) . That site should be considered the authoritative source for the modulus checking algorithm and weighting data.
+The algorithms, test cases and reference data can be found  [on the vocalink website]( https://www.vocalink.com/tools/modulus-checking/) . That site should be considered the authoritative source for the modulus checking algorithm and weighting data.
 
 #### Nuget
 Modulus Checker is [available on Nuget](https://nuget.org/packages/RedBear.ModulusChecking/). To install it run the following command in the Package Manager Console ```Install-Package RedBear.ModulusChecking``` and reference its namespace as ```using ModulusChecking;```
@@ -73,4 +73,4 @@ NB: the resource text files valacdos.txt and scsubtab.txt are produced and relea
 
 #### Vocalink Version
 
-Currently uses v5.70 of Vocalink Modulus Checking copied from [their site](https://www.vocalink.com/customer-support/modulus-checking/) on 2019-05-27.
+Currently uses v5.70 of Vocalink Modulus Checking copied from [their site]( https://www.vocalink.com/tools/modulus-checking/ ) on 2020-03-12.

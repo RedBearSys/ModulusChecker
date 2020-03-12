@@ -23,7 +23,12 @@ namespace ModulusChecking.Loaders
                 mappings = reader.ReadToEnd();
             }
 
+            if (mappings.Contains('\t'))
+                throw new Exception(
+                    "valacdos.txt contains a tab instead of a set of spaces.\n\nUse a text editor to search for regex \\t to identify the issue.");
+
             GetModulusWeightMappings = mappings
+                .Trim()
                 .Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
                 .Where(row => row.Length > 0)
                 .Select(row => ModulusWeightMapping.From(row))

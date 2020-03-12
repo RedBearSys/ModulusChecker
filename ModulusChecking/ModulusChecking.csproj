@@ -20,9 +20,7 @@
     <EmbeddedResource Include="Resources\scsubtab.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\valacdos.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\valacdos.txt" />
   </ItemGroup>
 
 </Project>

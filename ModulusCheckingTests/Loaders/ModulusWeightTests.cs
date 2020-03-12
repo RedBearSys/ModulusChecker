@@ -1,7 +1,8 @@
-using System.Linq;
 using ModulusChecking.Loaders;
 using ModulusChecking.Models;
 using NUnit.Framework;
+using System.IO;
+using System.Linq;
 
 namespace ModulusCheckingTests.Loaders
 {
@@ -13,8 +14,23 @@ namespace ModulusCheckingTests.Loaders
             var modulusWeight = ModulusWeightTable.GetInstance;
             Assert.NotNull(modulusWeight.RuleMappings);
 
+            var expected = 0;
+
+            using (var stream = typeof(ModulusWeightTable).Assembly.GetManifestResourceStream("ModulusChecking.Resources.valacdos.txt")) 
+                // ReSharper disable once AssignNullToNotNullAttribute
+            using (var reader = new StreamReader(stream))
+            {
+                var line = reader.ReadLine();
+
+                while (!string.IsNullOrEmpty(line))
+                {
+                    expected++;
+                    line = reader.ReadLine();
+                }
+            }
+
             // Number of populated lines in ModulusChecking\Resources\valacdos.txt
-            Assert.AreEqual(1093, modulusWeight.RuleMappings.Count());
+            Assert.AreEqual(expected, modulusWeight.RuleMappings.Count());
             Assert.IsInstanceOf<ModulusWeightMapping>(modulusWeight.RuleMappings.ElementAt(0));
         }
 
