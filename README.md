@@ -73,4 +73,4 @@ NB: the resource text files valacdos.txt and scsubtab.txt are produced and relea
 
 #### Vocalink Version
 
-Currently uses v5.70 of Vocalink Modulus Checking copied from [their site]( https://www.vocalink.com/tools/modulus-checking/ ) on 2020-03-12.
+Currently uses Vocalink Modulus Checking dated 26 April 2021 copied from [their site]( https://www.vocalink.com/tools/modulus-checking/ ).
