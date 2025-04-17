@@ -1,7 +1,7 @@
-﻿using ModulusChecking;
+﻿using FakeItEasy;
+using ModulusChecking;
 using ModulusChecking.Steps.Gates;
-using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules.Gates
 {
@@ -13,17 +13,16 @@ namespace ModulusCheckingTests.Rules.Gates
     /// </summary>
     public class ExceptionTwoGateTests
     {
-        private Mock<IProcessAStep> _nextStep;
-        private IsExceptionTwoAndFirstCheckPassedGate _isExceptionTwoAndFirstCheckPassedGate;
+        private readonly IProcessAStep _nextStep;
+        private readonly IsExceptionTwoAndFirstCheckPassedGate _isExceptionTwoAndFirstCheckPassedGate;
 
-        [SetUp]
-        public void Setup()
+        public ExceptionTwoGateTests()
         {
-            _nextStep = new Mock<IProcessAStep>();
-            _isExceptionTwoAndFirstCheckPassedGate = new IsExceptionTwoAndFirstCheckPassedGate(_nextStep.Object);
+            _nextStep = A.Fake<IProcessAStep>();
+            _isExceptionTwoAndFirstCheckPassedGate = new IsExceptionTwoAndFirstCheckPassedGate(_nextStep);
         }
         
-        [Test]
+        [Fact]
         public void CanSkipSecondCheckForExceptionTwoWithPassedFirstCheck()
         {
             var details = BankDetailsTestMother.BankDetailsWithException(2);
@@ -31,10 +30,10 @@ namespace ModulusCheckingTests.Rules.Gates
             
             _isExceptionTwoAndFirstCheckPassedGate.Process(details);
             
-            _nextStep.Verify(ns => ns.Process(details), Times.Never);
+            A.CallTo(() => _nextStep.Process(details)).MustNotHaveHappened();
         }
 
-        [Test]
+        [Fact]
         public void CanExplainSkippingSecondCheck()
         {
             var details = BankDetailsTestMother.BankDetailsWithException(2);
@@ -42,12 +41,12 @@ namespace ModulusCheckingTests.Rules.Gates
 
             var modulusCheckOutcome = _isExceptionTwoAndFirstCheckPassedGate.Process(details);
             
-            Assert.AreEqual("IsExceptionTwoAndFirstCheckPassed", modulusCheckOutcome.Explanation);
+            Assert.Equal("IsExceptionTwoAndFirstCheckPassed", modulusCheckOutcome.Explanation);
         }
 
-        [Test]
-        [TestCase(1, true, TestName = "When exception is not 2")]
-        [TestCase(2, false, TestName = "When first check failed")]
+        [Theory]
+        [InlineData(1, true)] // When exception is not 2
+        [InlineData(2, false)] // When first check failed
         public void CanCallNextStepWhenAccountDoesNotQualifyToSkip(int exception, bool firstCheck)
         {
             var details = BankDetailsTestMother.BankDetailsWithException(exception);
@@ -55,7 +54,7 @@ namespace ModulusCheckingTests.Rules.Gates
             
             _isExceptionTwoAndFirstCheckPassedGate.Process(details);
             
-            _nextStep.Verify(ns => ns.Process(details), Times.Once);
+            A.CallTo(() => _nextStep.Process(details)).MustHaveHappenedOnceExactly();
         }
     }
 }

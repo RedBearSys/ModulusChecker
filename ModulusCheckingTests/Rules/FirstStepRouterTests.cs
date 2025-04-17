@@ -1,46 +1,49 @@
-﻿using ModulusChecking.Models;
+﻿using FakeItEasy;
+using ModulusChecking.Models;
 using ModulusChecking.Steps;
 using ModulusChecking.Steps.Calculators;
-using NUnit.Framework;
-using Moq;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules
 {
-    internal class FirstStepRouterTests
+    public class FirstStepRouterTests
     {
-        private FirstStepRouter _targetRouter;
-        private Mock<FirstDoubleAlternateCalculator> _mockFirstDoubleAlternator;
-        private Mock<FirstStandardModulusElevenCalculator> _mockFirstStandardElevenCalculator;
-        private Mock<FirstStandardModulusTenCalculator> _mockFirstStandardTenCalculator;
-        private Mock<FirstStandardModulusElevenCalculatorExceptionFive> _mockFirstStandardElevenExceptionFiveCalculator;
-        private Mock<FirstDoubleAlternateCalculatorExceptionFive> _mockFirstDoubleAlternateExceptionFiveCalculator;
-        private FirstStepRouter _targetRouterForExceptionFive;
+        private readonly FirstStepRouter _targetRouter;
+        private readonly FirstDoubleAlternateCalculator _mockFirstDoubleAlternator;
+        private readonly FirstStandardModulusElevenCalculator _mockFirstStandardElevenCalculator;
+        private readonly FirstStandardModulusTenCalculator _mockFirstStandardTenCalculator;
+        private readonly FirstStandardModulusElevenCalculatorExceptionFive _mockFirstStandardElevenExceptionFiveCalculator;
+        private readonly FirstDoubleAlternateCalculatorExceptionFive _mockFirstDoubleAlternateExceptionFiveCalculator;
+        private readonly FirstStepRouter _targetRouterForExceptionFive;
 
-        [SetUp]
-        public void Setup()
+        public FirstStepRouterTests()
         {
-            _mockFirstStandardTenCalculator = new Mock<FirstStandardModulusTenCalculator>();
+            _mockFirstStandardTenCalculator = A.Fake<FirstStandardModulusTenCalculator>();
             _mockFirstStandardElevenExceptionFiveCalculator =
-                new Mock<FirstStandardModulusElevenCalculatorExceptionFive>();
+                A.Fake<FirstStandardModulusElevenCalculatorExceptionFive>();
             _mockFirstStandardElevenCalculator =
-                new Mock<FirstStandardModulusElevenCalculator>(_mockFirstStandardElevenExceptionFiveCalculator.Object);
+                A.Fake<FirstStandardModulusElevenCalculator>(b => b.WithArgumentsForConstructor([
+                    _mockFirstStandardElevenExceptionFiveCalculator
+                ]));
             _mockFirstDoubleAlternateExceptionFiveCalculator =
-                new Mock<FirstDoubleAlternateCalculatorExceptionFive>();
-            _mockFirstDoubleAlternator = new Mock<FirstDoubleAlternateCalculator>(_mockFirstDoubleAlternateExceptionFiveCalculator
-                                                                                 .Object);
-            _targetRouter = new FirstStepRouter(_mockFirstStandardTenCalculator.Object,
-                                                _mockFirstStandardElevenCalculator.Object,
-                                                _mockFirstDoubleAlternator.Object);
-            _targetRouterForExceptionFive = new FirstStepRouter(_mockFirstStandardTenCalculator.Object,
+                A.Fake<FirstDoubleAlternateCalculatorExceptionFive>();
+
+            _mockFirstDoubleAlternator = A.Fake<FirstDoubleAlternateCalculator>(b => b.WithArgumentsForConstructor([
+                _mockFirstDoubleAlternateExceptionFiveCalculator
+            ]));
+
+            _targetRouter = new FirstStepRouter(_mockFirstStandardTenCalculator,
+                                                _mockFirstStandardElevenCalculator,
+                                                _mockFirstDoubleAlternator);
+
+            _targetRouterForExceptionFive = new FirstStepRouter(_mockFirstStandardTenCalculator,
                                                                 new FirstStandardModulusElevenCalculator(
-                                                                    _mockFirstStandardElevenExceptionFiveCalculator
-                                                                        .Object),
+                                                                    _mockFirstStandardElevenExceptionFiveCalculator),
                                                                 new FirstDoubleAlternateCalculator(
-                                                                    _mockFirstDoubleAlternateExceptionFiveCalculator
-                                                                        .Object));
+                                                                    _mockFirstDoubleAlternateExceptionFiveCalculator));
         }
 
-        [Test]
+        [Fact]
         public void CanProcessModulusTen()
         {
             var bankDetails = new BankAccountDetails("123456", "12345678")
@@ -52,10 +55,10 @@ namespace ModulusCheckingTests.Rules
                 }
             };
             _targetRouter.GetModulusCalculation(bankDetails);
-            _mockFirstStandardTenCalculator.Verify(calc=>calc.Process(bankDetails));
+            A.CallTo(() => _mockFirstStandardTenCalculator.Process(bankDetails)).MustHaveHappened();
         }
 
-        [Test]
+        [Fact]
         public void CanProcessModulusEleven()
         {
             var bankDetails = new BankAccountDetails("123456", "12345678")
@@ -67,10 +70,10 @@ namespace ModulusCheckingTests.Rules
                 }
             };
             _targetRouter.GetModulusCalculation(bankDetails);
-            _mockFirstStandardElevenCalculator.Verify(calc => calc.Process(bankDetails));
+            A.CallTo(() => _mockFirstStandardElevenCalculator.Process(bankDetails)).MustHaveHappened();
         }
 
-        [Test]
+        [Fact]
         public void CanProcessModulusElevenExceptionFive()
         {
             var bankDetails = new BankAccountDetails("123456", "12345678")
@@ -82,10 +85,10 @@ namespace ModulusCheckingTests.Rules
                 }
             };
             _targetRouterForExceptionFive.GetModulusCalculation(bankDetails);
-            _mockFirstStandardElevenExceptionFiveCalculator.Verify(calc => calc.Process(bankDetails));
+            A.CallTo(() => _mockFirstStandardElevenExceptionFiveCalculator.Process(bankDetails)).MustHaveHappened();
         }
 
-        [Test]
+        [Fact]
         public void CanProcessDoubleAlternate()
         {
             var bankDetails = new BankAccountDetails("123456", "12345678")
@@ -97,10 +100,10 @@ namespace ModulusCheckingTests.Rules
                 }
             };
             _targetRouter.GetModulusCalculation(bankDetails);
-            _mockFirstDoubleAlternator.Verify(calc => calc.Process(bankDetails));
+            A.CallTo(() => _mockFirstDoubleAlternator.Process(bankDetails)).MustHaveHappened();
         }
 
-        [Test]
+        [Fact]
         public void CanProcessDoubleAlternateWithExceptionFive()
         {
             var bankDetails = new BankAccountDetails("123456", "12345678")
@@ -112,7 +115,7 @@ namespace ModulusCheckingTests.Rules
                 }
             };
             _targetRouterForExceptionFive.GetModulusCalculation(bankDetails);
-            _mockFirstDoubleAlternateExceptionFiveCalculator.Verify(calc => calc.Process(bankDetails));
+            A.CallTo(() => _mockFirstDoubleAlternateExceptionFiveCalculator.Process(bankDetails)).MustHaveHappened();
         }
     }
 }

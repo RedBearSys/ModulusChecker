@@ -1,62 +1,61 @@
-﻿using ModulusChecking;
+﻿using FakeItEasy;
+using ModulusChecking;
 using ModulusChecking.Steps.Gates;
-using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules.Gates
 {
     public class NoSecondCheckRequiredGateTests
     {
-        private Mock<IProcessAStep> _nextStep;
-        private IsSecondCheckRequiredGate _isSecondCheckRequiredGate;
+        private readonly IProcessAStep _nextStep;
+        private readonly IsSecondCheckRequiredGate _isSecondCheckRequiredGate;
 
-        [SetUp]
-        public void Setup()
+        public NoSecondCheckRequiredGateTests()
         {
-            _nextStep = new Mock<IProcessAStep>();
-            _isSecondCheckRequiredGate = new IsSecondCheckRequiredGate(_nextStep.Object);
+            _nextStep = A.Fake<IProcessAStep>();
+            _isSecondCheckRequiredGate = new IsSecondCheckRequiredGate(_nextStep);
         }
         
-        [Test]
-        [TestCase(2)]
-        [TestCase(9)]
-        [TestCase(10)]
-        [TestCase(11)]
-        [TestCase(12)]
-        [TestCase(13)]
-        [TestCase(14)]
+        [Theory]
+        [InlineData(2)]
+        [InlineData(9)]
+        [InlineData(10)]
+        [InlineData(11)]
+        [InlineData(12)]
+        [InlineData(13)]
+        [InlineData(14)]
         public void ExceptionRequiresSecondCheckItCallsNext(int exception)
         {
             var bankAccountDetails = BankDetailsTestMother.BankDetailsWithException(exception);
 
             _isSecondCheckRequiredGate.Process(bankAccountDetails);
             
-            _nextStep.Verify(ns => ns.Process(bankAccountDetails), Times.Once);
+            A.CallTo(() => _nextStep.Process(bankAccountDetails)).MustHaveHappenedOnceExactly();
         }
 
-        [Test]
-        [TestCase(1)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
-        [TestCase(15)]
+        [Theory]
+        [InlineData(1)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        [InlineData(15)]
         public void DoesNotCallSecondCheckIfExceptionDoesNotRequireIt(int exception)
         {
             var bankAccountDetails = BankDetailsTestMother.BankDetailsWithException(exception);
 
             _isSecondCheckRequiredGate.Process(bankAccountDetails);
-            
-            _nextStep.Verify(ns => ns.Process(bankAccountDetails), Times.Never);
+
+            A.CallTo(() => _nextStep.Process(bankAccountDetails)).MustNotHaveHappened();
         }
 
-        [Test]
+        [Fact]
         public void CanExplainWhyItDoesNotCallSecondCheck()
         {
             var bankAccountDetails = BankDetailsTestMother.BankDetailsWithException(3);
 
             var modulusCheckOutcome = _isSecondCheckRequiredGate.Process(bankAccountDetails);
             
-            Assert.AreEqual("first weight mapping exception does not require second check", modulusCheckOutcome.Explanation);
+            Assert.Equal("first weight mapping exception does not require second check", modulusCheckOutcome.Explanation);
         }
     }
 }

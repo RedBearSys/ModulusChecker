@@ -1,8 +1,8 @@
-﻿using ModulusChecking;
+﻿using FakeItEasy;
+using ModulusChecking;
 using ModulusChecking.Steps.Calculators;
 using ModulusChecking.Steps.Gates;
-using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules.Gates
 {
@@ -10,17 +10,16 @@ namespace ModulusCheckingTests.Rules.Gates
     {
         public class WhenIsCoutts
         {
-            private readonly Mock<StandardModulusExceptionFourteenCalculator> _mockCalc = new Mock<StandardModulusExceptionFourteenCalculator>();
-            private readonly Mock<IProcessAStep> _nextStep = new Mock<IProcessAStep>();
-            private ExceptionFourteenGate _exceptionFourteenGate;
+            private readonly StandardModulusExceptionFourteenCalculator _mockCalc = A.Fake<StandardModulusExceptionFourteenCalculator>();
+            private readonly IProcessAStep _nextStep = A.Fake<IProcessAStep>();
+            private readonly ExceptionFourteenGate _exceptionFourteenGate;
 
-            [SetUp]
-            public void Setup()
+            public WhenIsCoutts()
             {
-                _exceptionFourteenGate = new ExceptionFourteenGate(_mockCalc.Object, _nextStep.Object);
+                _exceptionFourteenGate = new ExceptionFourteenGate(_mockCalc, _nextStep);
             }
                 
-            [Test]
+            [Fact]
             public void ItReturnsFirstResultWhenThatPasses()
             {
                 var details = BankDetailsTestMother.BankDetailsWithException(14);
@@ -28,11 +27,11 @@ namespace ModulusCheckingTests.Rules.Gates
                     
                 _exceptionFourteenGate.Process(details);
                     
-                _nextStep.Verify(ns => ns.Process(details), Times.Never);
-                _mockCalc.Verify(mc => mc.Process(details), Times.Never);
+                A.CallTo(() => _nextStep.Process(details)).MustNotHaveHappened();
+                A.CallTo(() => _mockCalc.Process(details)).MustNotHaveHappened();
             }
                 
-            [Test]
+            [Fact]
             public void ItExplainsThatItReturnsFirstResultWhenThatPasses()
             {
                 var details = BankDetailsTestMother.BankDetailsWithException(14);
@@ -40,47 +39,47 @@ namespace ModulusCheckingTests.Rules.Gates
 
                 var modulusCheckOutcome = _exceptionFourteenGate.Process(details);
                     
-                Assert.AreEqual("Coutts Account with passing first check", modulusCheckOutcome.Explanation);
+                Assert.Equal("Coutts Account with passing first check", modulusCheckOutcome.Explanation);
             }
 
-            [Test]
+            [Fact]
             public void ItCallsTheExceptionCalculatorWhenTheFirstTestFails()
             {
                 var details = BankDetailsTestMother.BankDetailsWithException(14);
                 details.FirstResult = false;
                     
                 _exceptionFourteenGate.Process(details);
-                    
-                _nextStep.Verify(ns => ns.Process(details), Times.Never);
-                _mockCalc.Verify(mc => mc.Process(details), Times.Once);
+            
+                A.CallTo(() => _nextStep.Process(details)).MustNotHaveHappened();
+                A.CallTo(() => _mockCalc.Process(details)).MustHaveHappenedOnceExactly();
             }
                 
-            [Test]
+            [Fact]
             public void ItExplainsThatItCallsTheExceptionCalculatorWhenTheFirstTestFails()
             {
                 var details = BankDetailsTestMother.BankDetailsWithException(14);
                 details.FirstResult = false;
 
                 var modulusCheckOutcome = _exceptionFourteenGate.Process(details);
-                Assert.AreEqual("StandardModulusExceptionFourteenCalculator", modulusCheckOutcome.Explanation);
+                Assert.Equal("StandardModulusExceptionFourteenCalculator", modulusCheckOutcome.Explanation);
             }
         }
 
         public class WhenIsNotCoutts
         {
-            [Test]
+            [Fact]
             public void ItCallsTheNextStep()
             {
-                var mockCalc = new Mock<StandardModulusExceptionFourteenCalculator>();
-                var nextStep = new Mock<IProcessAStep>();
-                var gate = new ExceptionFourteenGate(mockCalc.Object, nextStep.Object);
+                var mockCalc = A.Fake<StandardModulusExceptionFourteenCalculator>();
+                var nextStep = A.Fake<IProcessAStep>();
+                var gate = new ExceptionFourteenGate(mockCalc, nextStep);
 
                 var details = BankDetailsTestMother.BankDetailsWithException(0);
 
                 gate.Process(details);
-                    
-                nextStep.Verify(ns => ns.Process(details), Times.Once);
-                mockCalc.Verify(mc => mc.Process(details), Times.Never);
+               
+                A.CallTo(() => nextStep.Process(details)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => mockCalc.Process(details)).MustNotHaveHappened();
             }
         }
 

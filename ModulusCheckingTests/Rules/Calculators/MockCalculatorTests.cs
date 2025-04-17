@@ -1,47 +1,44 @@
+using FakeItEasy;
 using ModulusChecking.Loaders;
 using ModulusChecking.Models;
 using ModulusChecking.Steps.Calculators;
-using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules.Calculators
 {
     public class MockCalculatorTests
     {
-        private Mock<IModulusWeightTable> _fakedModulusWeightTable;
+        private readonly IModulusWeightTable _fakedModulusWeightTable;
 
-        [SetUp]
-        public void Before()
+        public MockCalculatorTests()
         {
-            var mappingSource = new Mock<IRuleMappingSource>();
-            mappingSource.Setup(ms => ms.GetModulusWeightMappings).Returns(new []
-            {
+            var mappingSource = A.Fake<IRuleMappingSource>();
+            A.CallTo(() => mappingSource.GetModulusWeightMappings).Returns([
                 ModulusWeightMapping.From(
                     "000000 000100 MOD10 0 0 0 0 0 0 7 5 8 3 4 6 2 1 "),
                 ModulusWeightMapping.From(
                     "499273 499273 DBLAL    0    0    2    1    2    1    2    1    2    1    2    1    2    1   1"),
                 ModulusWeightMapping.From(
                     "200000 200002 DBLAL    2    1    2    1    2    1    2    1    2    1    2    1    2    1   6")
-            });
-            _fakedModulusWeightTable = new Mock<IModulusWeightTable>();
-            _fakedModulusWeightTable.Setup(fmwt => fmwt.RuleMappings).Returns(mappingSource.Object.GetModulusWeightMappings);
-            _fakedModulusWeightTable.Setup(fmwt => fmwt.GetRuleMappings(new SortCode("000000")))
-                .Returns(new []
-                {
-                    ModulusWeightMapping.From("000000 000100 MOD10 0 0 0 0 0 0 7 5 8 3 4 6 2 1 "),
-                });
+            ]);
+
+            _fakedModulusWeightTable = A.Fake<IModulusWeightTable>();
+            A.CallTo(() => _fakedModulusWeightTable.RuleMappings).Returns(mappingSource.GetModulusWeightMappings);
+            A.CallTo(() => _fakedModulusWeightTable.GetRuleMappings(new SortCode("000000"))).Returns([
+                ModulusWeightMapping.From("000000 000100 MOD10 0 0 0 0 0 0 7 5 8 3 4 6 2 1 ")
+            ]);
         }
 
-        [Test]
+        [Fact]
         public void CanProcessStandardElevenCheck()
         {
             var accountDetails = new BankAccountDetails("000000", "58177632");
-            accountDetails.WeightMappings = _fakedModulusWeightTable.Object.GetRuleMappings(accountDetails.SortCode);
+            accountDetails.WeightMappings = _fakedModulusWeightTable.GetRuleMappings(accountDetails.SortCode);
             var result = new FirstStandardModulusElevenCalculator().Process(accountDetails);
             Assert.True(result);
         }
 
-        [Test]
+        [Fact]
         //vocalink test case
         public void CanProcessVocalinkStandardTenCheck()
         {
@@ -51,7 +48,7 @@ namespace ModulusCheckingTests.Rules.Calculators
             Assert.True(result);
         }
 
-        [Test]
+        [Fact]
         public void CanProcessVocalinkStandardEleven()
         {
             var accountDetails = new BankAccountDetails("107999", "88837491");

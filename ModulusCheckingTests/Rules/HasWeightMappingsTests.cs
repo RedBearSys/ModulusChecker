@@ -1,35 +1,34 @@
 using System.Collections.Generic;
+using FakeItEasy;
 using ModulusChecking;
 using ModulusChecking.Models;
 using ModulusChecking.Steps.ConfirmDetailsAreValid;
-using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules
 {
     public class HasWeightMappingsTests
     {
-        private HasWeightMappings _hasWeightMappingsStep;
-        private Mock<IProcessAStep> _nextStep;
+        private readonly HasWeightMappings _hasWeightMappingsStep;
+        private readonly IProcessAStep _nextStep;
 
-        private readonly List<ModulusWeightMapping> _literallyAnyMapping = new List<ModulusWeightMapping>
-        {
+        private readonly List<ModulusWeightMapping> _literallyAnyMapping =
+        [
             new ModulusWeightMapping(
-                new SortCode("010004"), 
-                new SortCode("010004"), 
+                new SortCode("010004"),
+                new SortCode("010004"),
                 ModulusAlgorithm.DblAl,
-                new [] {0, 1, 2}, 
+                [0, 1, 2],
                 1)
-        };
+        ];
 
-        [SetUp]
-        public void Before()
+        public HasWeightMappingsTests()
         {
-            _nextStep = new Mock<IProcessAStep>(); 
-            _hasWeightMappingsStep = new HasWeightMappings(_nextStep.Object);
+            _nextStep = A.Fake<IProcessAStep>(); 
+            _hasWeightMappingsStep = new HasWeightMappings(_nextStep);
         }
 
-        [Test]
+        [Fact]
         public void UnknownSortCodeIsNull()
         {
             const string sortCode = "123456";
@@ -39,10 +38,10 @@ namespace ModulusCheckingTests.Rules
                 WeightMappings = new List<ModulusWeightMapping>()
             };
             var result = _hasWeightMappingsStep.Process(accountDetails);
-            Assert.IsNull(result.Result);
+            Assert.Null(result.Result);
         }
         
-        [Test]
+        [Fact]
         public void UnknownSortCodeCanBeExplained()
         {
             var accountDetails = new BankAccountDetails("123456", "12345678")
@@ -53,10 +52,10 @@ namespace ModulusCheckingTests.Rules
             
             var result = _hasWeightMappingsStep.Process(accountDetails);
             
-            Assert.IsNotEmpty(result.Explanation);
+            Assert.NotEmpty(result.Explanation);
         }
 
-        [Test]
+        [Fact]
         public void KnownSortCodeIsTested()
         {
             var accountDetails = new BankAccountDetails("010004", "12345678")
@@ -65,8 +64,8 @@ namespace ModulusCheckingTests.Rules
             };
 
             _hasWeightMappingsStep.Process(accountDetails);
-            
-            _nextStep.Verify(nr => nr.Process(accountDetails));
+           
+            A.CallTo(() => _nextStep.Process(accountDetails)).MustHaveHappened();
         }
     }
 }

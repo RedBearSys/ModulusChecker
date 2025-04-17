@@ -1,27 +1,27 @@
 ﻿using ModulusChecking.Loaders;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Loaders
-{ 
+{
     public class SortCodeSubstitutionTests
     {
         
         private readonly SortCodeSubstitution _substituter = new SortCodeSubstitution();
 
-        [Test]
-        [TestCase("938289","938068")]
-        [TestCase("938297","938076")]
-        [TestCase("938600","938611")]
-        [TestCase("938602","938343")]
-        [TestCase("938604","938603")]
-        [TestCase("938608","938408")]
-        [TestCase("938609","938424")]
-        [TestCase("938613","938017")]
-        [TestCase("938616","938068")]
-        [TestCase("123456","123456")]
+        [Theory]
+        [InlineData("938289","938068")]
+        [InlineData("938297","938076")]
+        [InlineData("938600","938611")]
+        [InlineData("938602","938343")]
+        [InlineData("938604","938603")]
+        [InlineData("938608","938408")]
+        [InlineData("938609","938424")]
+        [InlineData("938613","938017")]
+        [InlineData("938616","938068")]
+        [InlineData("123456","123456")]
         public void CanCorrectlySubstituteSortCodes(string orig, string sub)
         {
-            Assert.AreEqual(sub, _substituter.GetSubstituteSortCode(orig));
+            Assert.Equal(sub, _substituter.GetSubstituteSortCode(orig));
         }
     }
 }

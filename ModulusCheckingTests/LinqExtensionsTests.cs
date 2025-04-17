@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 using ModulusChecking;
+using Xunit;
 
 namespace ModulusCheckingTests
 {
-    internal class LinqExtensionsTests
+    public class LinqExtensionsTests
     {
-        [Test]
+        [Fact]
         public void CanCallForSecondItemInEnumerable()
         {
             var target = new List<int>{1, 2, 3, 4, 5};
-            Assert.AreEqual(2,target.Second());
+            Assert.Equal(2,target.Second());
         }
 
-        [Test]
+        [Fact]
         public void ThrowsExceptionAsExpectedWithSingleItemList()
         {
             var target = new List<int> {1};

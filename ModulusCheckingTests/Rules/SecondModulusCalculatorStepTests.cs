@@ -1,73 +1,72 @@
-﻿using ModulusChecking;
+﻿using FakeItEasy;
+using ModulusChecking;
 using ModulusChecking.Models;
 using ModulusChecking.Steps;
 using ModulusChecking.Steps.Calculators;
-using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules
 {
     public class SecondModulusCalculatorStepTests
     {
-        private Mock<SecondDoubleAlternateCalculator> _doubleAlternate;
-        private Mock<SecondStandardModulusElevenCalculator> _standardEleven;
-        private Mock<SecondStandardModulusTenCalculator> _standardTen;
-        private SecondStepRouter _secondStepRouter;
-        private Mock<IProcessAStep> _nextStep;
+        private readonly SecondDoubleAlternateCalculator _doubleAlternate;
+        private readonly SecondStandardModulusElevenCalculator _standardEleven;
+        private readonly SecondStandardModulusTenCalculator _standardTen;
+        private readonly SecondStepRouter _secondStepRouter;
+        private readonly IProcessAStep _nextStep;
 
-        [SetUp]
-        public void Before()
+        public SecondModulusCalculatorStepTests()
         {
-            _standardTen = new Mock<SecondStandardModulusTenCalculator>();
-            _standardEleven = new Mock<SecondStandardModulusElevenCalculator>();
-            _doubleAlternate = new Mock<SecondDoubleAlternateCalculator>();
+            _standardTen = A.Fake<SecondStandardModulusTenCalculator>();
+            _standardEleven = A.Fake<SecondStandardModulusElevenCalculator>();
+            _doubleAlternate = A.Fake<SecondDoubleAlternateCalculator>();
 
-            _standardTen.Setup(nr => nr.Process(It.IsAny<BankAccountDetails>())).Returns(true);
-            _standardEleven.Setup(nr => nr.Process(It.IsAny<BankAccountDetails>())).Returns(true);
-            _doubleAlternate.Setup(nr => nr.Process(It.IsAny<BankAccountDetails>())).Returns(true);
+            A.CallTo(() => _standardTen.Process(A<BankAccountDetails>.Ignored)).Returns(true);
+            A.CallTo(() => _standardEleven.Process(A<BankAccountDetails>.Ignored)).Returns(true);
+            A.CallTo(() => _doubleAlternate.Process(A<BankAccountDetails>.Ignored)).Returns(true);
 
-            _secondStepRouter = new SecondStepRouter(_standardTen.Object, _standardEleven.Object, _doubleAlternate.Object);
+            _secondStepRouter = new SecondStepRouter(_standardTen, _standardEleven, _doubleAlternate);
 
-            _nextStep = new Mock<IProcessAStep>();
+            _nextStep = A.Fake<IProcessAStep>();
         }
 
-        [Test]
+        [Fact]
         public void CanChooseMod10()
         {
-            var secondModulusCalculatorStep = new SecondModulusCalculatorStep(_secondStepRouter, _nextStep.Object);
+            var secondModulusCalculatorStep = new SecondModulusCalculatorStep(_secondStepRouter, _nextStep);
             var details = BankDetailsTestMother.BankDetailsWithAlgorithm(ModulusAlgorithm.Mod10);
             secondModulusCalculatorStep.Process(details);
-            
-            _standardTen.Verify(st => st.Process(details), Times.Once);
-            _standardEleven.Verify(st => st.Process(details), Times.Never);
-            _doubleAlternate.Verify(st => st.Process(details), Times.Never);
-            _nextStep.Verify(st => st.Process(details), Times.Once);
+
+            A.CallTo(() => _standardTen.Process(details)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _standardEleven.Process(details)).MustNotHaveHappened();
+            A.CallTo(() => _doubleAlternate.Process(details)).MustNotHaveHappened();
+            A.CallTo(() => _nextStep.Process(details)).MustHaveHappenedOnceExactly();
         }
         
-        [Test]
+        [Fact]
         public void CanChooseMod11()
         {
-            var secondModulusCalculatorStep = new SecondModulusCalculatorStep(_secondStepRouter, _nextStep.Object);
+            var secondModulusCalculatorStep = new SecondModulusCalculatorStep(_secondStepRouter, _nextStep);
             var details = BankDetailsTestMother.BankDetailsWithAlgorithm(ModulusAlgorithm.Mod11);
             secondModulusCalculatorStep.Process(details);
             
-            _standardTen.Verify(st => st.Process(details), Times.Never);
-            _standardEleven.Verify(st => st.Process(details), Times.Once);
-            _doubleAlternate.Verify(st => st.Process(details), Times.Never);
-            _nextStep.Verify(st => st.Process(details), Times.Once);
+            A.CallTo(() => _standardTen.Process(details)).MustNotHaveHappened();
+            A.CallTo(() => _standardEleven.Process(details)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _doubleAlternate.Process(details)).MustNotHaveHappened();
+            A.CallTo(() => _nextStep.Process(details)).MustHaveHappenedOnceExactly();
         }
         
-        [Test]
+        [Fact]
         public void CanChooseDblAl()
         {
-            var secondModulusCalculatorStep = new SecondModulusCalculatorStep(_secondStepRouter, _nextStep.Object);
+            var secondModulusCalculatorStep = new SecondModulusCalculatorStep(_secondStepRouter, _nextStep);
             var details = BankDetailsTestMother.BankDetailsWithAlgorithm(ModulusAlgorithm.DblAl);
             secondModulusCalculatorStep.Process(details);
-            
-            _standardTen.Verify(st => st.Process(details), Times.Never);
-            _standardEleven.Verify(st => st.Process(details), Times.Never);
-            _doubleAlternate.Verify(st => st.Process(details), Times.Once);
-            _nextStep.Verify(st => st.Process(details), Times.Once);
+           
+            A.CallTo(() => _standardTen.Process(details)).MustNotHaveHappened();
+            A.CallTo(() => _standardEleven.Process(details)).MustNotHaveHappened();
+            A.CallTo(() => _doubleAlternate.Process(details)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _nextStep.Process(details)).MustHaveHappenedOnceExactly();
         }
     }
 }

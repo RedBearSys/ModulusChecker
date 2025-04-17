@@ -1,5 +1,5 @@
 ﻿using ModulusChecking;
-using NUnit.Framework;
+using Xunit;
 
 namespace PublicInterfaceTests
 {
@@ -11,34 +11,34 @@ namespace PublicInterfaceTests
         private const string Sortcode = "775024";
         private const string AccNumber = "26862368";
 
-        [Test]
+        [Fact]
         public void ItCanRevalidateDetailsOnImmediateRepeat()
         {
             var checker = new ModulusChecker();
 
-            Assert.IsTrue(checker.CheckBankAccount(Sortcode, AccNumber));
-            Assert.IsTrue(checker.CheckBankAccount(Sortcode, AccNumber));
+            Assert.True(checker.CheckBankAccount(Sortcode, AccNumber));
+            Assert.True(checker.CheckBankAccount(Sortcode, AccNumber));
         }
 
-        [Test]
-        [TestCase("776203", "01193899")]
-        [TestCase("089999", "66374958")]
+        [Theory]
+        [InlineData("776203", "01193899")]
+        [InlineData("089999", "66374958")]
         public void SeparatingCheckPassesInIsolation(string sc, string an)
         {
             var checker = new ModulusChecker();
-            Assert.IsTrue(checker.CheckBankAccount(Sortcode, AccNumber));
+            Assert.True(checker.CheckBankAccount(sc, an));
         }
 
-        [Test]
-        [TestCase("776203", "01193899")]
-        [TestCase("089999", "66374958")]
+        [Theory]
+        [InlineData("776203", "01193899")]
+        [InlineData("089999", "66374958")]
         public void ItCanRevalidateDetailsOnSeparatedRepeat(string sc, string an)
         {
             var checker = new ModulusChecker();
 
-            Assert.IsTrue(checker.CheckBankAccount(Sortcode, AccNumber), string.Format("first check should have passed for {0} and {1}", Sortcode, AccNumber));
-            Assert.IsTrue(checker.CheckBankAccount(sc, an), string.Format("separating check should have passed for {0} and {1}", sc, an));
-            Assert.IsTrue(checker.CheckBankAccount(Sortcode, AccNumber), string.Format("second check should have passed for {0} and {1}", Sortcode, AccNumber));
+            Assert.True(checker.CheckBankAccount(Sortcode, AccNumber), string.Format("first check should have passed for {0} and {1}", Sortcode, AccNumber));
+            Assert.True(checker.CheckBankAccount(sc, an), string.Format("separating check should have passed for {0} and {1}", sc, an));
+            Assert.True(checker.CheckBankAccount(Sortcode, AccNumber), string.Format("second check should have passed for {0} and {1}", Sortcode, AccNumber));
         }
     }
 }

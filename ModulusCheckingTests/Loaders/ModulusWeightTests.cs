@@ -1,14 +1,14 @@
 using ModulusChecking.Loaders;
 using ModulusChecking.Models;
-using NUnit.Framework;
 using System.IO;
 using System.Linq;
+using Xunit;
 
 namespace ModulusCheckingTests.Loaders
 {
     public class ModulusWeightTests
     {
-        [Test]
+        [Fact]
         public void CanGetRuleMappings()
         {
             var modulusWeight = ModulusWeightTable.GetInstance;
@@ -30,23 +30,22 @@ namespace ModulusCheckingTests.Loaders
             }
 
             // Number of populated lines in ModulusChecking\Resources\valacdos.txt
-            Assert.AreEqual(expected, modulusWeight.RuleMappings.Count());
-            Assert.IsInstanceOf<ModulusWeightMapping>(modulusWeight.RuleMappings.ElementAt(0));
+            Assert.Equal(expected, modulusWeight.RuleMappings.Count());
         }
 
-        [Test]
+        [Fact]
         public void ThereAreNoMod10MappingsWithExceptionFive()
         {
             var modulusWeight = ModulusWeightTable.GetInstance;
-            Assert.IsFalse(modulusWeight.RuleMappings.Any(rm=>rm.Exception==5 && rm.Algorithm==ModulusAlgorithm.Mod10));
+            Assert.DoesNotContain(modulusWeight.RuleMappings, rm => rm.Exception == 5 && rm.Algorithm == ModulusAlgorithm.Mod10);
         }
 
-        [Test]
+        [Fact]
         public void AllExceptionNineRowsAreModEleven()
         {
             var modulusWeight = ModulusWeightTable.GetInstance;
             var exceptionNineRows = modulusWeight.RuleMappings.Where(rm => rm.Exception == 9).ToList();
-            Assert.IsTrue(exceptionNineRows.All(r => r.Algorithm == ModulusAlgorithm.Mod11));
+            Assert.True(exceptionNineRows.All(r => r.Algorithm == ModulusAlgorithm.Mod11));
         }
     }
 }

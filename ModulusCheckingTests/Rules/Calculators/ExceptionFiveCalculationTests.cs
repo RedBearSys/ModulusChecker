@@ -1,88 +1,80 @@
 ﻿using ModulusChecking.Loaders;
 using ModulusChecking.Models;
 using ModulusChecking.Steps.Calculators;
-using NUnit.Framework;
+using Xunit;
 
 namespace ModulusCheckingTests.Rules.Calculators
 {
     public class ExceptionFiveCalculationTests
     {
-        private DoubleAlternateCalculatorExceptionFive _secondDoubleAlternateExceptionFiveCalculator;
-        private FirstStandardModulusElevenCalculatorExceptionFive _standardExceptionFiveCalculator;
+        private readonly DoubleAlternateCalculatorExceptionFive _secondDoubleAlternateExceptionFiveCalculator = new SecondDoubleAlternateCalculatorExceptionFive();
+        private readonly FirstStandardModulusElevenCalculatorExceptionFive _standardExceptionFiveCalculator = new();
 
-        [SetUp]
-        public void Setup()
-        {
-            _secondDoubleAlternateExceptionFiveCalculator =
-                new SecondDoubleAlternateCalculatorExceptionFive();
-            _standardExceptionFiveCalculator = new FirstStandardModulusElevenCalculatorExceptionFive();
-        }
-
-        [Test]
+        [Fact]
         public void CanCalculateForExceptionFiveWhereCheckPasses()
         {
             var accountDetails = new BankAccountDetails("938611", "07806039");
             accountDetails.WeightMappings = ModulusWeightTable.GetInstance.GetRuleMappings(accountDetails.SortCode);
             var standardResult = _standardExceptionFiveCalculator.Process(accountDetails);
             var doubleResult = _secondDoubleAlternateExceptionFiveCalculator.Process(accountDetails);
-            Assert.IsTrue(standardResult);
-            Assert.IsTrue(doubleResult);
+            Assert.True(standardResult);
+            Assert.True(doubleResult);
         }
 
-        [Test]
+        [Fact]
         public void CanCalculateForExceptionFiveWhereCheckPassesWithSubstitution()
         {
             var accountDetails = new BankAccountDetails("938600", "42368003");
             accountDetails.WeightMappings = ModulusWeightTable.GetInstance.GetRuleMappings(accountDetails.SortCode);
             var standardResult = _standardExceptionFiveCalculator.Process(accountDetails);
             var doubleResult = _secondDoubleAlternateExceptionFiveCalculator.Process(accountDetails);
-            Assert.IsTrue(standardResult);
-            Assert.IsTrue(doubleResult);
+            Assert.True(standardResult);
+            Assert.True(doubleResult);
         }
 
-        [Test]
+        [Fact]
         public void CanCalculateForExceptionFiveWhereBothChecksPass()
         {
             var accountDetails = new BankAccountDetails("938063", "55065200");
             accountDetails.WeightMappings = ModulusWeightTable.GetInstance.GetRuleMappings(accountDetails.SortCode);
             var standardResult = _standardExceptionFiveCalculator.Process(accountDetails);
             var doubleResult = _secondDoubleAlternateExceptionFiveCalculator.Process(accountDetails);
-            Assert.IsTrue(standardResult);
-            Assert.IsTrue(doubleResult);
+            Assert.True(standardResult);
+            Assert.True(doubleResult);
         }
 
 
-        [Test]
+        [Fact]
         public void CanCalculateForExceptionFiveWhereFirstCheckDigitIsCorrectAndSecondIncorrect()
         {
             var accountDetails = new BankAccountDetails("938063", "15764273");
             accountDetails.WeightMappings = ModulusWeightTable.GetInstance.GetRuleMappings(accountDetails.SortCode);
             var standardResult = _standardExceptionFiveCalculator.Process(accountDetails);
             var doubleResult = _secondDoubleAlternateExceptionFiveCalculator.Process(accountDetails);
-            Assert.IsTrue(standardResult);
-            Assert.IsFalse(doubleResult);
+            Assert.True(standardResult);
+            Assert.False(doubleResult);
         }
 
-        [Test]
+        [Fact]
         public void CanCalculateForExceptionFiveWhereFirstCheckDigitIsIncorrectAndSecondIsCorrect()
         {
             var accountDetails = new BankAccountDetails("938063", "15764264");
             accountDetails.WeightMappings = ModulusWeightTable.GetInstance.GetRuleMappings(accountDetails.SortCode);
             var standardResult = _standardExceptionFiveCalculator.Process(accountDetails);
             var doubleResult = _secondDoubleAlternateExceptionFiveCalculator.Process(accountDetails);
-            Assert.IsFalse(standardResult);
-            Assert.IsTrue(doubleResult);
+            Assert.False(standardResult);
+            Assert.True(doubleResult);
         }
 
-        [Test]
+        [Fact]
         public void CanCalculateForExceptionFiveWhereFirstCheckDigitIsIncorrectWithARemainderOfOne()
         {
             var accountDetails = new BankAccountDetails("938063", "15763217");
             accountDetails.WeightMappings = ModulusWeightTable.GetInstance.GetRuleMappings(accountDetails.SortCode);
             var result = _standardExceptionFiveCalculator.Process(accountDetails);
             var doubleResult = _secondDoubleAlternateExceptionFiveCalculator.Process(accountDetails);
-            Assert.IsFalse(result);
-            Assert.IsTrue(doubleResult);
+            Assert.False(result);
+            Assert.True(doubleResult);
         }
     }
 }

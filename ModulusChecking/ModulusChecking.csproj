@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>RedBear.ModulusChecking</PackageId>
     <Company>Red Bear Software Limited</Company>
     <Product />
     <Description>This is a fork of Paul D'Ambra's C# implementation of UK Bank Account Modulus Checking but for a .NET Standard 2.0 target. Modulus Checking is a process used to determine if a given account number could be valid for a given sort code.</Description>
-    <Copyright>Copyright 2012 Paul D'Ambra and Copyright 2018 Red Bear Software Limited</Copyright>
+    <Copyright>Copyright 2012 Paul D'Ambra and Copyright 2018-2025 Red Bear Software Limited</Copyright>
     <PackageLicenseUrl>https://github.com/RedBearSys/ModulusChecker/raw/master/MIT-LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/RedBearSys/ModulusChecker</PackageProjectUrl>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
